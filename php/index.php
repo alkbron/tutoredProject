@@ -8,14 +8,33 @@
 
 require_once "bibli.php";
 
+//Affichage de l'entete du html
 print_head('Chiots','style.css');
+
+//Connexion a la base de données
+$pdo = connectToBdd();
+
+//Comptage du nombre de chiens
+$nbChiots = countChiots($pdo);
+
+//On regarde si il y a un chien de selectionne
+
+if(isset($_GET['idChiot'])){
+    $chiotSelected = $_GET['idChiot'];
+}else {
+    $chiotSelected = -1;
+}
 echo '<body>';
 
-print_nav_big();
+print_header($nbChiots);
+
+print_nav_big($nbChiots);
+
+
 
 echo '<div class="mainBody ">';
 
-print_nav_small();
+print_nav_small($nbChiots);
 //TODO REMPLIR LES POST AVEC CEUX DE LA BASE DE DONNEE !!!!!
 
 /*
@@ -32,8 +51,10 @@ $tab_message = array(new Message('Chiot 1',$url,$tab_comm,$content,'01/01/2020')
     new Message('Chiot 5',$url,$tab_comm,$content,'01/01/2020'));
 $compteur = 0;
 */
-$pdo = connectToBdd();
-$tab_message = arrayPosts($pdo);
+
+
+
+$tab_message = arrayPosts($pdo,$chiotSelected);
 $compteur = 0;
 
 foreach ($tab_message as $message){

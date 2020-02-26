@@ -24,6 +24,7 @@ function print_head($titre='',$css=''){
     '<title>',$titre,'</title>',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
         //JS
+    '<script src="../js/jquery-3.4.1.js"></script>',
     '<script src="../js/bootstrap.js"></script>',
         //CSS
     '<link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />',
@@ -42,14 +43,14 @@ function print_message(Message $message,$numero_message){
             '<h3>',$message->author,'</h3>',
             '<div class="msgBody">',
                 '<div class="img">',
-                    '<img  src="',$message->url_image,'">',
+                    '<img  src="',"../".$message->url_image,'">',
                 '</div>',
                 '<div class="texte">',
                     $message->contenu,
                 '</div>',
             '</div>',
             '<div class="msgFooter">',
-                '<div>',$message->date,'</div>',
+                '<div>',print_date_user($message->date),'</div>',
                     '<div>',
                         '<label for="toggleComments-',$numero_message,'">Afficher les commentaires</label>',
                         '<input type="checkbox" class="toggleComments" id="toggleComments-',$numero_message,'">',
@@ -68,24 +69,50 @@ function print_message(Message $message,$numero_message){
 }
 
 
-function print_nav_big(){
+function print_nav_big($nbChiots){
+
     echo '<div class="navBig">',
-    '<ul>',
-    '<li><a href="index.php?nomChiot=\'chiot1\'">chiot1</a></li>',
-    '<li><a href="index.php?nomChiot=\'chiot2\'">chiot2</a></li>',
-    '<li><a href="index.php?nomChiot=\'chiot3\'">chiot3</a></li>',
-    '</ul>',
+    '<ul>';
+
+    echo '<li><a href="index.php">Tous les chiots</a></li>';
+
+    for($i=1;$i<=$nbChiots;$i++){
+        echo '<li><a href="index.php?idChiot='. $i .'">Chiot '.$i.'</a></li>';
+    }
+
+    echo '</ul>',
     '</div>';
 }
 
-function print_nav_small(){
+function print_nav_small($nbChiots){
+    if(isset($_GET['idChiot'])){
+        $idChiotSelected = $_GET['idChiot'];
+    }else {
+        $idChiotSelected = -1;
+    }
+
     echo '<select class="navSmall" onchange="window.open(this.value,\'_self\');">',
-    '<ul>',
-    '<option value="index.php">Tous les chiots</option>',
-    '<option value="index.php?nomChiot=\'chiot1\'">Page 1</option>',
-    '<option value="index.php?nomChiot=\'chiot2\'">Page 2</option>',
-    '<option value="index.php?nomChiot=\'chiot3\'">Page 3</option>',
-    '</ul>',
+    '<ul>';
+
+    echo '<option value="index.php?idChiot=-1"';
+
+    if($idChiotSelected==-1){
+        echo 'selected>';
+    }
+
+    echo 'Tous les chiots</option>';
+
+    for($i=1;$i<=$nbChiots;$i++){
+        echo '<option value="index.php?idChiot='.$i.'"';
+
+        if($idChiotSelected==$i){
+            echo 'selected>';
+        }
+
+        echo 'Chiot '.$i.'</option>';
+    }
+
+    echo '</ul>',
     '</select>';
 }
 
@@ -99,10 +126,17 @@ function connectToBdd(){
 /**
  * Fonction qui retourne un tableau avec tous les posts
  * @param PDO $pdo
+ * @param int $chiotSelected Le chiot selectionné
  * @return array Le tableau de tous les posts
  */
-function arrayPosts(PDO $pdo){
-    $pdostat = $pdo->query("SELECT * FROM posts");
+function arrayPosts(PDO $pdo, $chiotSelected){
+
+    $sql = "SELECT * FROM posts";
+    if($chiotSelected!=-1){
+        $sql = $sql." WHERE idChiot = ".$chiotSelected;
+    }
+
+    $pdostat = $pdo->query($sql);
     $pdostat->setFetchMode(PDO::FETCH_ASSOC);
 
     $array = array();
@@ -123,6 +157,140 @@ function arrayPosts(PDO $pdo){
 
         array_push($array,new Message("Chiot ".$item["idChiot"],$ligne["urlImage1"],$array_comm,$item["txtPost"],$item["datePost"]));
     }
-
+    usort($array,"compareDate");
     return $array;
+}
+
+function countChiots(PDO $pdo){
+    return $pdo->query("SELECT COUNT(*) FROM chiots")->fetchColumn();
+}
+
+/**
+ * Compare 2 dates sous la forme SQL pour pouvoir par exemple trier un tableau
+ * @param $post1
+ * @param $post2
+ *
+ * @return int $res 1 si 2 apres 1, -1 sinon, 0 si egales
+ */
+function compareDate(Message $post1,Message $post2)
+{
+    $date1 = $post1->date;
+    $date2 = $post2->date;
+
+    $split1 = explode("-", $date1);
+    $split2 = explode("-", $date2);
+
+    if ($split1[0] < $split2[0]) {
+        return 1;
+    }
+
+        if ($split1[0] > $split2[0]) {
+            return -1;
+        }
+            //Les deux annees sont egales
+            if ($split1[1] < $split2[1]) {
+                return 1;
+            }
+                if ($split1[1] > $split2[1]) {
+                    return -1;
+                }
+                    //Les deux mois sont egaux
+                    if ($split1[2] < $split2[2]) {
+                        return 1;
+                    }
+                        if ($split1[2] > $split2[2]) {
+                            return -1;
+                        }
+    return 0;
+}
+
+function print_header($nbChiots){
+    echo '<header class="text-white">',
+            '<form action="../upload.php" method="post" enctype="multipart/form-data">',
+                '<table>',
+                    '<tr>',
+                        '<td><textarea id="content_post" name="content_post"></textarea></td>',
+                    '</tr>',
+                    '<tr>',
+                        '<td><input type="file" id="fileToUpload" name="fileToUpload"></td>';
+    echo '<td>',
+        '<select name="auteur">';
+
+    for($i=1;$i<=$nbChiots;$i++){
+        echo '<option value="'.$i.'">Chiot '.$i.'</option>';
+    }
+
+     echo   '</select>',
+        '</td>';
+    echo        '<td><input type="submit" value="Postez" name="submit"></td>',
+                    '</tr>',
+                '</table>',
+            '</form>',
+        '</header>';
+}
+
+function addPost(PDO $pdo, Message $message){
+    $idPost = lastIDPost($pdo) + 1 ;
+
+    $sql = "INSERT INTO posts (idPost,txtPost,idImageAssoc,idChiot,datePost) VALUES ($idPost,'$message->contenu',$idPost,'$message->author','$message->date')";
+    echo $sql;
+    $pdo->query($sql);
+
+    $sql = "INSERT INTO imagepost (idImage,urlImage1,urlImage2,urlImage3,urlImage4) VALUES ($idPost,'$message->url_image','','','')";
+    echo $sql;
+    $pdo->query($sql);
+}
+
+function lastIDPost(PDO $pdo){
+    return $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn();
+}
+
+function print_date_user($date) {
+    $string = "";
+
+    $split = explode("-",$date);
+
+    $string = "Le $split[2] ";
+
+    switch ($split[1]){
+        case "01":
+            $string = $string . "Janvier";
+            break;
+        case "02":
+            $string = $string . "Février";
+            break;
+        case "03":
+            $string = $string . "Mars";
+            break;
+        case "04":
+            $string = $string . "Avril";
+            break;
+        case "05":
+            $string = $string . "Mai";
+            break;
+        case "06":
+            $string = $string . "Juin";
+            break;
+        case "07":
+            $string = $string . "Juillet";
+            break;
+        case "08":
+            $string = $string . "Aout";
+            break;
+        case "09":
+            $string = $string . "Septembre";
+            break;
+        case "10":
+            $string = $string . "Octobre";
+            break;
+        case "11":
+            $string = $string . "Novembre";
+            break;
+        case "12":
+            $string = $string . "Décembre";
+            break;
+    }
+
+    $string = $string ." ".  $split[0];
+    return $string;
 }
