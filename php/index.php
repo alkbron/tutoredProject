@@ -9,7 +9,7 @@
 require_once "bibli.php";
 
 //Affichage de l'entete du html
-print_head('Chiots','style.css');
+print_head('Chiots','style_final.css');
 
 //Connexion a la base de données
 $pdo = connectToBdd();
@@ -24,9 +24,35 @@ if(isset($_GET['idChiot'])){
 }else {
     $chiotSelected = -1;
 }
+
+//Ajout du commentaire :
+
+if(isset($_GET['comment'])){
+    $newCommentaire = new Commentaire($_POST['auteurComment'],$_POST['txtComment'],date("Y-m-d"));
+    add_Comment($pdo,$_GET['comment'],$newCommentaire);
+}
+
+if(isset($_GET['error'])){
+    switch ($_GET['error']){
+        case 1:
+            $messageError='Le fichier n\'est pas une image';
+            break;
+        case 2:
+            $messageError='Désolé, l\'image est trop grande';
+            break;
+        case 3:
+            $messageError='Désolé, l\'image n\'est pas du bon type';
+            break;
+        case 4:
+            $messageError = 'Désolé, il y a eu une erreur lors de la publication de l\'image!';
+            break;
+    }
+}else{
+    $messageError="";
+}
 echo '<body>';
 
-print_header($nbChiots);
+print_header($nbChiots,$messageError);
 
 print_nav_big($nbChiots);
 
@@ -58,7 +84,7 @@ $tab_message = arrayPosts($pdo,$chiotSelected);
 $compteur = 0;
 
 foreach ($tab_message as $message){
-    print_message($message,$compteur);
+    print_message($message,$compteur,$nbChiots);
     $compteur++;
 }
 echo '</div></body></html>';

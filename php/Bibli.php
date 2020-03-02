@@ -37,8 +37,9 @@ function print_head($titre='',$css=''){
  * Renvoie vers la sortie standard le code html d'un message
  * @param $message Message
  * @param $numero_message int numero du message (pour pouvoir tous les differencier)
+ * @param $nbChiots int nombre de chiots dans la page
  */
-function print_message(Message $message,$numero_message){
+function print_message(Message $message,$numero_message,$nbChiots){
     echo '<div class="message col-md-12">',
             '<h3>',$message->author,'</h3>',
             '<div class="msgBody">',
@@ -59,13 +60,28 @@ function print_message(Message $message,$numero_message){
     //Boucle pour mettre tous les commentaires sous le message
     foreach ($message->tableau_commentaires as $commentaire){
         echo '<div class="commentaire">',
-                $commentaire->author,':',$commentaire->contenu,
+                $commentaire->author,' : ',$commentaire->contenu,
             '</div>';
     }
-    echo                '</div>',
+    echo '<div>',
+            "<form action='index.php?comment=$message->idMessage' method='POST'>",
+                'Entrez votre commentaire : ',
+                '<input type="text" name="txtComment">',
+    '<select name="auteurComment">';
+
+    for($i=1;$i<=$nbChiots;$i++){
+        echo '<option value="'.$i.'">Chiot '.$i.'</option>';
+    }
+
+    echo   '</select>',
+                '<input type="submit" value="Postez !">',
+
+                        '</form>',
                     '</div>',
                 '</div>',
-            '</div>';
+            '</div>',
+        '</div>',
+    '</div>';
 }
 
 
@@ -155,7 +171,7 @@ function arrayPosts(PDO $pdo, $chiotSelected){
         $ligne = $pdo3stat->fetch();
 
 
-        array_push($array,new Message("Chiot ".$item["idChiot"],$ligne["urlImage1"],$array_comm,$item["txtPost"],$item["datePost"]));
+        array_push($array,new Message("Chiot ".$item["idChiot"],$ligne["urlImage1"],$array_comm,$item["txtPost"],$item["datePost"],$item["idPost"]));
     }
     usort($array,"compareDate");
     return $array;
@@ -204,7 +220,7 @@ function compareDate(Message $post1,Message $post2)
     return 0;
 }
 
-function print_header($nbChiots){
+function print_header($nbChiots,$messageError){
     echo '<header class="text-white">',
             '<form action="../upload.php" method="post" enctype="multipart/form-data">',
                 '<table>',
@@ -224,6 +240,7 @@ function print_header($nbChiots){
         '</td>';
     echo        '<td><input type="submit" value="Postez" name="submit"></td>',
                     '</tr>',
+            "<td class='error'>$messageError</td>",
                 '</table>',
             '</form>',
         '</header>';
@@ -243,6 +260,18 @@ function addPost(PDO $pdo, Message $message){
 
 function lastIDPost(PDO $pdo){
     return $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn();
+}
+
+function lastIDComment(PDO $pdo){
+    return $pdo->query("SELECT COUNT(*) FROM comments")->fetchColumn();
+}
+
+function add_Comment($pdo,$idPost,Commentaire $commentaire){
+    $idComment = lastIDComment($pdo) + 1;
+
+    $sql = "INSERT INTO comments (idComment,txtComment,idChiotAuteur,idPost,dateComment) VALUES ($idComment,'$commentaire->contenu',$commentaire->author,$idPost,'$commentaire->date')";
+    echo $sql;
+    $pdo->query($sql);
 }
 
 function print_date_user($date) {
@@ -294,3 +323,4 @@ function print_date_user($date) {
     $string = $string ." ".  $split[0];
     return $string;
 }
+
