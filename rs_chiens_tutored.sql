@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  jeu. 27 fév. 2020 à 21:43
+-- Généré le :  lun. 02 mars 2020 à 17:28
 -- Version du serveur :  5.7.24
 -- Version de PHP :  7.2.14
 
@@ -80,7 +80,9 @@ INSERT INTO `comments` (`idComment`, `txtComment`, `idChiotAuteur`, `idPost`, `d
 (12, 'Content que ça se passe bien :) ', 2, 4, '2020-02-10'),
 (13, 'Ouaaaah ', 1, 5, '2020-02-11'),
 (14, 'OKLM ', 2, 5, '2020-02-09'),
-(15, 'Cool ', 3, 5, '2020-02-12');
+(15, 'Cool ', 3, 5, '2020-02-12'),
+(16, 'Salut a tous Chris', 1, 9, '2020-03-02'),
+(17, 'skuskuuuuuu', 5, 4, '2020-03-02');
 
 -- --------------------------------------------------------
 
@@ -109,7 +111,9 @@ INSERT INTO `imagepost` (`idImage`, `urlImage1`, `urlImage2`, `urlImage3`, `urlI
 (4, 'img/chiot4_1', '', '', ''),
 (5, 'img/chiot1_2', '', '', ''),
 (6, 'uploads/chiot5_2.jpg', '', '', ''),
-(7, 'uploads/chiot2_0.jpg', '', '', '');
+(7, 'uploads/chiot2_0.jpg', '', '', ''),
+(8, 'uploads/chiot3_0.jpg', '', '', ''),
+(9, 'uploads/chiot3_1.jpg', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -138,7 +142,9 @@ INSERT INTO `posts` (`idPost`, `txtPost`, `idImageAssoc`, `idChiot`, `datePost`)
 (4, 'Le dressage de Sacha a commenc&eacute; hier, il conna&icirc;t d&eacute;j&agrave; plein de nouveaux tours ! Sacha donne la patte ! haha ', 4, 4, '2020-02-12'),
 (5, 'Philou dort comme un lard ! hahaha bonne nuit tout le monde ! ', 5, 1, '2020-02-10'),
 (6, 'BONJOUR A TOUS, fin de transmianfoznaozmd', 6, 5, '2020-02-25'),
-(7, 'OUAAAAAIS ', 7, 2, '2020-02-25');
+(7, 'OUAAAAAIS ', 7, 2, '2020-02-25'),
+(8, 'salut salut les amis ', 8, 3, '2020-03-02'),
+(9, 'asaigsoausgla', 9, 3, '2020-03-02');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
