@@ -1,8 +1,10 @@
-body{
-  background-image: url("../img/wood_bg.jpg");
-  background-repeat: repeat;
+* {
+	color: black;
 }
 
+body{
+  background-color: #8395a1;
+}
 .mainBody{
   width: 65%;
   height: 200px;
@@ -19,25 +21,35 @@ body{
   margin-top: 15px;
   border-style: solid;
   border-width: 4px;
+  border-radius: 5%;
+  border-color: #82c936;
   padding-top : 10px;
   padding-bottom : 10px;
   padding-left : 5px;
   padding-right : 5px;
   overflow: hidden;
-  background-color: gray;
+  background-color: #606c73;
 }
 
 .navBig{
   position: fixed;
   left: 0%;
-  background-color: gray;
+  background-color: #606c73;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 5%;
+  border-color: #82c936;
 }
 
 .navSmall{
   display: none;
-  background-color: gray;
-  width: 80%;
+  background-color: #606c73;
+  width: 95%;
   margin: auto;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 5%;
+  border-color: #82c936;
 }
 
 
@@ -48,19 +60,19 @@ h3{
 
 
 header{
-  display: inline-block;
-  width: 50%;
+  width: 60%;
   border-style: solid;
   border-width: 4px;
-  border-radius: 10%;
+  border-radius: 5%;
+  border-color: #82c936;
   padding-top : 10px;
   padding-bottom : 10px;
   padding-left : 5px;
   padding-right : 5px;
-
-
   overflow: hidden;
-  margin-left: 20%;
+  margin: auto;
+  background-color: #606c73;
+  margin-top: 15px;
 }
 
 
@@ -139,9 +151,7 @@ h4{
   font-size: 20px;
 }
 
-.error {
-  color: yellow;
-}
+
 @media (max-width:800px) {
   .mainBody{
     width: 100%;
@@ -152,7 +162,11 @@ h4{
   }
 
   .message{
-    width: 100%;
+    width: 95%;
+  }
+  
+  header {
+	  width: 95% !important;
   }
 
   .navBig{
