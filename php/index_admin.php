@@ -6,7 +6,7 @@
  * Time: 22:06
  */
 
-require_once "Bibli.php";
+require_once "Bibli_admin.php";
 
 //Affichage de l'entete du html
 print_head('Chiots','style_final.css');
@@ -57,11 +57,7 @@ if(isset($_GET['error'])) {
     }
 }
 echo '<body>';
-
-//Affichage de la partie pour saisir un message
-
-print_header($arrayChiots,$messageError);
-
+echo '<h1 class="text-center bg-danger">MODE ADMINISTRATION </h1>';
 //Affichage de la navbar (si grand ecran)
 print_nav_big($arrayChiots);
 

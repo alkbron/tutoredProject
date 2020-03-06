@@ -14,7 +14,7 @@ class Message
     public $contenu;
     public $date;
     public $idMessage;
-
+    public $titre;
     /**
      * Message constructor.
      * @param $author
@@ -24,7 +24,7 @@ class Message
      * @param $date
      * @param $idMessage
      */
-    public function __construct($author, $url_image, $tableau_commentaires, $contenu, $date,$idMessage)
+    public function __construct($author, $url_image, $tableau_commentaires, $contenu, $date,$idMessage,$titre)
     {
         $this->idMessage = $idMessage;
         $this->author = $author;
@@ -32,6 +32,7 @@ class Message
         $this->tableau_commentaires = $tableau_commentaires;
         $this->contenu = $contenu;
         $this->date = $date;
+        $this->titre = $titre;
     }
 
     /**
