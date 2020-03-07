@@ -92,12 +92,32 @@ textarea{
   height: 9em;
 }
 
+input[type="file"]{
+	display: none;
+}
+
 
 img {
   float: left;
   max-height: 200px;
   margin-right: 20px;
   width: auto;
+}
+
+.modal-content{
+	display: inline-block;
+	max-width: none;
+	max-height: none;
+	background-color: transparent;
+	border: 0px;
+	margin: auto;
+	width: auto;
+	height: auto;
+}
+
+.bigImage{
+	max-height: none;
+	margin: auto;
 }
 
 
