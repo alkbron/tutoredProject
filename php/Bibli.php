@@ -120,11 +120,12 @@ function print_message(Message $message,$numero_message,$array_chiots){
     //Boucle pour mettre tous les commentaires sous le message
     foreach ($message->tableau_commentaires as $commentaire){
         echo '<div class="commentaire">',
-                $commentaire->author->nomChiot,' : ',$commentaire->contenu,
+                $commentaire->author->nomChiot,' : ',$commentaire->contenu,'<br><em class="pr-3">',print_date_user($commentaire->date),'</em>',
+        '<hr>',
             '</div>';
     }
     echo '<div>',
-            "<form action='index.php?comment=$message->idMessage' method='POST'>",
+            "<form action='index.php?comment=$message->idMessage' method='POST' >",
                 'Entrez votre commentaire : ',
                 '<input type="text" name="txtComment">',
     '<select name="auteurComment">';
@@ -241,8 +242,19 @@ function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
                     $chiot_tmp1 = $chiot;
                 }
             }
-            array_push($array_comm,new Commentaire($chiot_tmp1,$comm_item["txtComment"],$comm_item["dateComment"]));
+            array_push($array_comm,new Commentaire($chiot_tmp1,$comm_item["txtComment"],$comm_item["dateComment"],$comm_item["idComment"]));
         }
+
+        usort($array_comm,function ($a,$b){
+            $ad = new DateTime($a->date);
+            $bd = new DateTime($b->date);
+
+            if ($ad == $bd) {
+                return 0;
+            }
+
+            return $ad < $bd ? -1 : 1;
+        });
 
         $pdo3stat = $pdo->query("SELECT * FROM imagepost WHERE idImage=" . $item["idImageAssoc"]);
         $pdo3stat->setFetchMode(PDO::FETCH_ASSOC);
@@ -273,7 +285,16 @@ function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
         }
 
     }
-    usort($array,"compareDate");
+    usort($array,function ($a,$b){
+        $ad = new DateTime($a->date);
+        $bd = new DateTime($b->date);
+
+        if ($ad == $bd) {
+            return 0;
+        }
+
+        return $ad < $bd ? 1 : -1;
+    });
     return $array;
 }
 
@@ -300,45 +321,6 @@ function getAllChiots(PDO $pdo){
     return $array;
 }
 
-/**
- * Compare 2 dates sous la forme SQL pour pouvoir par exemple trier un tableau
- * @param $post1
- * @param $post2
- *
- * @return int $res 1 si 2 apres 1, -1 sinon, 0 si egales
- */
-function compareDate(Message $post1,Message $post2)
-{
-    $date1 = $post1->date;
-    $date2 = $post2->date;
-
-    $split1 = explode("-", $date1);
-    $split2 = explode("-", $date2);
-
-    if ($split1[0] < $split2[0]) {
-        return 1;
-    }
-
-        if ($split1[0] > $split2[0]) {
-            return -1;
-        }
-            //Les deux annees sont egales
-            if ($split1[1] < $split2[1]) {
-                return 1;
-            }
-                if ($split1[1] > $split2[1]) {
-                    return -1;
-                }
-                    //Les deux mois sont egaux
-                    if ($split1[2] < $split2[2]) {
-                        return 1;
-                    }
-                        if ($split1[2] > $split2[2]) {
-                            return -1;
-                        }
-    return 0;
-}
-
 function print_header($array_chiots,$messageError){
     echo '<header class="text-white rounded">',
             '<form action="../upload.php" method="post" enctype="multipart/form-data">',
@@ -350,7 +332,7 @@ function print_header($array_chiots,$messageError){
                         '<td><textarea id="content_post" name="content_post"></textarea></td>',
                     '</tr>',
                     '<tr>',
-                        '<td><input type="file" id="fileToUpload" name="fileToUpload"></td>';
+                        '<td><input type="file" id="fileToUpload1" name="fileToUpload1"></td>';
     echo '<td>',
         '<select name="auteur">';
 
@@ -360,6 +342,9 @@ function print_header($array_chiots,$messageError){
 
      echo   '</select>',
         '</td>';
+        echo '<tr><td><input type="file" id="fileToUpload2" name="fileToUpload2"></td>',
+        '<tr><td><input type="file" id="fileToUpload3" name="fileToUpload3"></td>',
+        '<tr><td><input type="file" id="fileToUpload4" name="fileToUpload4"></td>';
     echo        '<td><input type="submit" value="Postez" name="submit"></td>',
                     '</tr>',
             "<td class='error'>$messageError</td>",
@@ -369,10 +354,28 @@ function print_header($array_chiots,$messageError){
 }
 
 function addPost(PDO $pdo, Message $message){
-    $idPost = lastIDPost($pdo) + 1 ;
-
-    $sql = "INSERT INTO imagepost (urlImage1,urlImage2,urlImage3,urlImage4) VALUES ('$message->url_image','','','')";
-    //echo $sql;
+    $cpt = 0;
+    $string = "(";
+    foreach ($message->url_image as $url){
+        $string = $string. "'$url'";
+        if($cpt==3){
+            $string =$string . ')';
+        }else {
+            $string = $string . ",";
+        }
+        $cpt++;
+    }
+    while($cpt<4){
+        $string = $string . "''";
+        if($cpt==3){
+            $string =$string . ')';
+        }else {
+            $string = $string . ",";
+        }
+        $cpt++;
+    }
+    $sql = "INSERT INTO imagepost (urlImage1,urlImage2,urlImage3,urlImage4) VALUES $string";
+    echo $sql;
     $pdo->query($sql);
     $idImageAssoc = $pdo->lastInsertId();
     if($message->author instanceof Chiot){
@@ -406,9 +409,11 @@ function add_Comment($pdo,$idPost,Commentaire $commentaire){
 }
 
 function print_date_user($date) {
+    $jour = explode(" ",$date)[0];
+    $heure = explode(" ",$date)[1];
     $string = "";
 
-    $split = explode("-",$date);
+    $split = explode("-",$jour);
 
     $string = "Le $split[2] ";
 
@@ -451,7 +456,7 @@ function print_date_user($date) {
             break;
     }
 
-    $string = $string ." ".  $split[0];
+    $string = $string ." ".  $split[0]. " à ".$heure;
     return $string;
 }
 

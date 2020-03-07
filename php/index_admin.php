@@ -9,7 +9,7 @@
 require_once "Bibli_admin.php";
 
 //Affichage de l'entete du html
-print_head('Chiots','style_final.css');
+print_head('ADMINChiots','style_final.css');
 
 //Connexion a la base de données
 $pdo = connectToBdd();
@@ -28,34 +28,14 @@ if(isset($_GET['idChiot'])){
     $chiotSelected = -1;
 }
 
-//Ajout du commentaire :
-
-if(isset($_GET['comment'])){
-    $newCommentaire = new Commentaire($_POST['auteurComment'],$_POST['txtComment'],date("Y-m-d"));
-    add_Comment($pdo,$_GET['comment'],$newCommentaire);
+if(isset($_GET["delPost"])){
+    deletePost($pdo,$_GET["delPost"]);
 }
 
-//Gestion du message d'erreur lors de l'ajout de post
-$messageError = "";
-if(isset($_GET['error'])) {
-    switch ($_GET['error']) {
-        case 1:
-            $messageError = 'Le fichier n\'est pas une image';
-            break;
-        case 2:
-            $messageError = 'Désolé, l\'image est trop grande';
-            break;
-        case 3:
-            $messageError = 'Désolé, l\'image n\'est pas du bon type';
-            break;
-        case 4:
-            $messageError = 'Désolé, il y a eu une erreur lors de la publication de l\'image!';
-            break;
-        case 5:
-            $messageError = 'Vous n\'avez pas renseigné de titre !';
-            break;
-    }
+if(isset($_GET["delComment"])){
+    deleteComment($pdo,$_GET["delComment"]);
 }
+
 echo '<body>';
 echo '<h1 class="text-center bg-danger">MODE ADMINISTRATION </h1>';
 //Affichage de la navbar (si grand ecran)

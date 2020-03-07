@@ -11,18 +11,21 @@ class Commentaire
     public $author;
     public $contenu;
     public $date;
+    public $idCommentaire;
 
     /**
      * Commentaire constructor.
      * @param $author
      * @param $contenu
      * @param $date
+     * @param $idCommentaire
      */
-    public function __construct($author, $contenu, $date)
+    public function __construct($author, $contenu, $date,$idCommentaire)
     {
         $this->author = $author;
         $this->contenu = $contenu;
         $this->date = $date;
+        $this->idCommentaire = $idCommentaire;
     }
 
     /**

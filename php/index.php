@@ -31,7 +31,7 @@ if(isset($_GET['idChiot'])){
 //Ajout du commentaire :
 
 if(isset($_GET['comment'])){
-    $newCommentaire = new Commentaire($_POST['auteurComment'],$_POST['txtComment'],date("Y-m-d"));
+    $newCommentaire = new Commentaire($_POST['auteurComment'],$_POST['txtComment'],date("Y-m-d H:i:s"),0);
     add_Comment($pdo,$_GET['comment'],$newCommentaire);
 }
 

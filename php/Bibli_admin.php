@@ -43,7 +43,7 @@ function print_head($titre='',$css=''){
  */
 function print_message(Message $message,$numero_message,$array_chiots){
     echo '<div class="message col-md-12 rounded">',
-            '<h3>',$message->titre,'<em> par ',$message->author->nomChiot,'</em></h3>',
+            '<h3 class="d-inline">',$message->titre,'<em> par ',$message->author->nomChiot,'</em></h3><a href="index_admin.php?delPost='.$message->idMessage.'" class="d-inline float-right btn-danger rounded">Supprimer</a>',
             '<div class="msgBody">';
 
 
@@ -120,25 +120,12 @@ function print_message(Message $message,$numero_message,$array_chiots){
     //Boucle pour mettre tous les commentaires sous le message
     foreach ($message->tableau_commentaires as $commentaire){
         echo '<div class="commentaire">',
-                $commentaire->author->nomChiot,' : ',$commentaire->contenu,
+                $commentaire->author->nomChiot,' : ',$commentaire->contenu,'<br><em class="pr-3">',print_date_user($commentaire->date),'</em>', '<a href="index_admin.php?delComment='.$commentaire->idCommentaire.'" class="btn-danger rounded">Supprimer</a>',
+            '<hr>',
             '</div>';
     }
-    echo '<div>',
-            "<form action='index.php?comment=$message->idMessage' method='POST'>",
-                'Entrez votre commentaire : ',
-                '<input type="text" name="txtComment">',
-    '<select name="auteurComment">';
 
-    foreach ($array_chiots as $chiot){
-        echo '<option value="'.$chiot->idChiot.'">'.$chiot->nomChiot.'</option>';
-    }
-
-    echo   '</select>',
-                '<input type="submit" value="Postez !">',
-
-                        '</form>',
-                    '</div>',
-                '</div>',
+    echo            '</div>',
             '</div>',
         '</div>',
     '</div>';
@@ -210,6 +197,23 @@ function connectToBdd(){
     return $pdo;
 }
 
+function deletePost(PDO $pdo,$idPost){
+    $idImage =  $pdo->query("SELECT idImageAssoc FROM posts WHERE idPost=$idPost")->fetchColumn();
+    if(strlen($idImage)>0){
+        $sql = "DELETE FROM imagepost WHERE idImage=$idImage";
+        $pdo->query($sql);
+    }
+    $sql = "DELETE FROM posts WHERE idPost=$idPost";
+    $pdo->query($sql);
+    $sql = "DELETE FROM comments WHERE idPost=$idPost";
+    $pdo->query($sql);
+}
+
+function deleteComment(PDO $pdo, $idComment){
+    $sql = "DELETE FROM comments WHERE idComment=$idComment";
+    $pdo->query($sql);
+}
+
 /**
  * Fonction qui retourne un tableau avec tous les posts
  * @param PDO $pdo
@@ -241,8 +245,19 @@ function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
                     $chiot_tmp1 = $chiot;
                 }
             }
-            array_push($array_comm,new Commentaire($chiot_tmp1,$comm_item["txtComment"],$comm_item["dateComment"]));
+            array_push($array_comm,new Commentaire($chiot_tmp1,$comm_item["txtComment"],$comm_item["dateComment"],$comm_item["idComment"]));
         }
+
+        usort($array_comm,function ($a,$b){
+            $ad = new DateTime($a->date);
+            $bd = new DateTime($b->date);
+
+            if ($ad == $bd) {
+                return 0;
+            }
+
+            return $ad < $bd ? -1 : 1;
+        });
 
         $pdo3stat = $pdo->query("SELECT * FROM imagepost WHERE idImage=" . $item["idImageAssoc"]);
         $pdo3stat->setFetchMode(PDO::FETCH_ASSOC);
@@ -273,7 +288,16 @@ function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
         }
 
     }
-    usort($array,"compareDate");
+    usort($array,function ($a,$b){
+        $ad = new DateTime($a->date);
+        $bd = new DateTime($b->date);
+
+        if ($ad == $bd) {
+            return 0;
+        }
+
+        return $ad < $bd ? 1 : -1;
+    });
     return $array;
 }
 
@@ -298,45 +322,6 @@ function getAllChiots(PDO $pdo){
     }
 
     return $array;
-}
-
-/**
- * Compare 2 dates sous la forme SQL pour pouvoir par exemple trier un tableau
- * @param $post1
- * @param $post2
- *
- * @return int $res 1 si 2 apres 1, -1 sinon, 0 si egales
- */
-function compareDate(Message $post1,Message $post2)
-{
-    $date1 = $post1->date;
-    $date2 = $post2->date;
-
-    $split1 = explode("-", $date1);
-    $split2 = explode("-", $date2);
-
-    if ($split1[0] < $split2[0]) {
-        return 1;
-    }
-
-        if ($split1[0] > $split2[0]) {
-            return -1;
-        }
-            //Les deux annees sont egales
-            if ($split1[1] < $split2[1]) {
-                return 1;
-            }
-                if ($split1[1] > $split2[1]) {
-                    return -1;
-                }
-                    //Les deux mois sont egaux
-                    if ($split1[2] < $split2[2]) {
-                        return 1;
-                    }
-                        if ($split1[2] > $split2[2]) {
-                            return -1;
-                        }
-    return 0;
 }
 
 function print_header($array_chiots,$messageError){
@@ -406,9 +391,11 @@ function add_Comment($pdo,$idPost,Commentaire $commentaire){
 }
 
 function print_date_user($date) {
+    $jour = explode(" ",$date)[0];
+    $heure = explode(" ",$date)[1];
     $string = "";
 
-    $split = explode("-",$date);
+    $split = explode("-",$jour);
 
     $string = "Le $split[2] ";
 
@@ -451,7 +438,7 @@ function print_date_user($date) {
             break;
     }
 
-    $string = $string ." ".  $split[0];
+    $string = $string ." ".  $split[0]. " à ".$heure;
     return $string;
 }
 
