@@ -76,9 +76,20 @@ function print_message(Message $message,$numero_message,$array_chiots){
                         echo ' active';
                     }
                     echo '">',
-                            '<img class="d-block w-100 " src="../'.$image.'">',
+                            '<img class="d-block w-100 " src="../'.$image.'"  onclick="$(\'#'.$message->idMessage.$cpt.'\').modal(\'show\');">',
                         '</div>';
-
+					
+					echo '<div class="modal fade" id="'.$message->idMessage.$cpt.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">',
+							'<div class="modal-dialog modal-lg modal-dialog-centered" role="document">',
+								'<div class="modal-content">',
+									'<div class="modal-body">',
+										'<img class="bigImage" src="../'.$image.'">',
+									'</div>',
+								'</div>',
+							'</div>',
+						'</div>';
+						
+						
                     $cpt++;
 
                 }
@@ -102,7 +113,17 @@ function print_message(Message $message,$numero_message,$array_chiots){
 
             }else {
               echo '<div class="img">',
-                    '<img  src="',"../".$message->url_image[0],'">',
+                    '<img  src="',"../".$message->url_image[0],'" onclick="$(\'#'.$message->idMessage.'\').modal(\'show\');">';
+					
+				echo '<div class="modal fade" id="'.$message->idMessage.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">',
+						'<div class="modal-dialog modal-lg modal-dialog-centered" role="document">',
+							'<div class="modal-content">',
+								'<div class="modal-body">',
+									'<img class="bigImage" src="../'.$message->url_image[0].'">',
+								'</div>',
+							'</div>',
+						'</div>',
+					'</div>',
                 '</div>';
             }
 
@@ -332,7 +353,7 @@ function print_header($array_chiots,$messageError){
                         '<td><textarea id="content_post" name="content_post"></textarea></td>',
                     '</tr>',
                     '<tr>',
-                        '<td><input type="file" id="fileToUpload1" name="fileToUpload1"></td>';
+                        '<td><input type="file" id="fileToUpload1" style="display: block;" name="fileToUpload1" onchange="document.getElementById(\'fileToUpload2\').style.display=\'block\';"></td>';
     echo '<td>',
         '<select name="auteur">';
 
@@ -342,8 +363,8 @@ function print_header($array_chiots,$messageError){
 
      echo   '</select>',
         '</td>';
-        echo '<tr><td><input type="file" id="fileToUpload2" name="fileToUpload2"></td>',
-        '<tr><td><input type="file" id="fileToUpload3" name="fileToUpload3"></td>',
+        echo '<tr><td><input type="file" id="fileToUpload2" name="fileToUpload2" onchange="document.getElementById(\'fileToUpload3\').style.display=\'block\';"></td>',
+        '<tr><td><input type="file" id="fileToUpload3" name="fileToUpload3" onchange="document.getElementById(\'fileToUpload4\').style.display=\'block\';"></td>',
         '<tr><td><input type="file" id="fileToUpload4" name="fileToUpload4"></td>';
     echo        '<td><input type="submit" value="Postez" name="submit"></td>',
                     '</tr>',
