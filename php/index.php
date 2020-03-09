@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zieda
- * Date: 04/02/2020
- * Time: 22:06
- */
 
 require_once "Bibli.php";
 

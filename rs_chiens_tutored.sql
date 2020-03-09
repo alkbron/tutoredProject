@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 07 mars 2020 à 22:51
+-- Généré le : lun. 09 mars 2020 à 12:53
 -- Version du serveur :  10.4.11-MariaDB
 -- Version de PHP : 7.4.3
 
@@ -25,20 +25,20 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Structure de la table `chiots`
+-- Structure de la table `01_chiots`
 --
 
-CREATE TABLE `chiots` (
+CREATE TABLE `01_chiots` (
   `idChiot` int(11) NOT NULL,
   `nomChiot` varchar(32) NOT NULL,
   `sexe` varchar(7) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `chiots`
+-- Déchargement des données de la table `01_chiots`
 --
 
-INSERT INTO `chiots` (`idChiot`, `nomChiot`, `sexe`) VALUES
+INSERT INTO `01_chiots` (`idChiot`, `nomChiot`, `sexe`) VALUES
 (1, 'Ora', 'F'),
 (2, 'Ourson', 'M'),
 (3, 'Oups', 'M'),
@@ -49,10 +49,10 @@ INSERT INTO `chiots` (`idChiot`, `nomChiot`, `sexe`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `comments`
+-- Structure de la table `01_comments`
 --
 
-CREATE TABLE `comments` (
+CREATE TABLE `01_comments` (
   `idComment` int(11) NOT NULL,
   `txtComment` text NOT NULL,
   `idChiotAuteur` int(11) NOT NULL,
@@ -61,10 +61,10 @@ CREATE TABLE `comments` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `comments`
+-- Déchargement des données de la table `01_comments`
 --
 
-INSERT INTO `comments` (`idComment`, `txtComment`, `idChiotAuteur`, `idPost`, `dateComment`) VALUES
+INSERT INTO `01_comments` (`idComment`, `txtComment`, `idChiotAuteur`, `idPost`, `dateComment`) VALUES
 (1, 'Enorme !', 4, 1, '2020-02-11 22:00:00'),
 (2, 'Trop bien', 5, 1, '2020-02-11 19:00:00'),
 (3, 'Cool', 2, 1, '2020-02-12 00:21:00'),
@@ -84,16 +84,15 @@ INSERT INTO `comments` (`idComment`, `txtComment`, `idChiotAuteur`, `idPost`, `d
 (20, 'Magnifique ! ', 3, 5, '2020-03-05 00:00:00'),
 (21, 'Super ! ', 4, 3, '2020-03-05 13:10:00'),
 (22, 'Salut ! ', 6, 2, '2020-03-05 17:00:00'),
-(24, 'mdrr ! ', 3, 26, '2020-03-07 22:50:24'),
-(25, 'Mdrrrrrrrr !', 2, 26, '2020-03-07 22:50:35');
+(26, 'Ouah', 6, 4, '2020-03-08 13:35:20');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `imagepost`
+-- Structure de la table `01_imagepost`
 --
 
-CREATE TABLE `imagepost` (
+CREATE TABLE `01_imagepost` (
   `idImage` int(11) NOT NULL,
   `urlImage1` varchar(40) NOT NULL,
   `urlImage2` varchar(40) NOT NULL,
@@ -102,24 +101,23 @@ CREATE TABLE `imagepost` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `imagepost`
+-- Déchargement des données de la table `01_imagepost`
 --
 
-INSERT INTO `imagepost` (`idImage`, `urlImage1`, `urlImage2`, `urlImage3`, `urlImage4`) VALUES
+INSERT INTO `01_imagepost` (`idImage`, `urlImage1`, `urlImage2`, `urlImage3`, `urlImage4`) VALUES
 (1, 'img/chiot1_1.jpg', 'img/chiot2_1.jpg', 'img/chiot1_2.jpg', 'img/chiot4_1.jpg'),
 (2, 'img/chiot2_1.jpg', 'img/chiot4_1.jpg', 'img/chiot2_1.jpg', 'img/chiot3_1.jpg'),
 (3, 'img/chiot3_1.jpg', 'img/chiot1_2.jpg', 'img/chiot2_1.jpg', ''),
 (4, 'img/chiot4_1.jpg', 'img/chiot3_1.jpg', '', ''),
-(5, 'img/chiot1_2.jpg', '', '', ''),
-(30, 'uploads/chiot1_0.jpg', '', '', '');
+(5, 'img/chiot1_2.jpg', '', '', '');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `posts`
+-- Structure de la table `01_posts`
 --
 
-CREATE TABLE `posts` (
+CREATE TABLE `01_posts` (
   `idPost` int(11) NOT NULL,
   `txtPost` text NOT NULL,
   `idImageAssoc` int(11) NOT NULL,
@@ -129,43 +127,42 @@ CREATE TABLE `posts` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `posts`
+-- Déchargement des données de la table `01_posts`
 --
 
-INSERT INTO `posts` (`idPost`, `txtPost`, `idImageAssoc`, `idChiot`, `datePost`, `titre`) VALUES
+INSERT INTO `01_posts` (`idPost`, `txtPost`, `idImageAssoc`, `idChiot`, `datePost`, `titre`) VALUES
 (1, 'Philou se sent tr&egrave;s bien dans sa nouvelle famille! Gros bisous de sa part :)', 1, 1, '2020-01-02 10:00:01', 'Famille'),
 (2, 'Volt se familiarise d&eacute;j&agrave; avec notre chat Tesla, que de bonheur ! Nous pensons &agrave; prendre un hamster et le nommer Amp&egrave;re hahaha \r\nGros bisous !  ', 2, 2, '2020-01-02 10:00:03', 'Amour entre chien et chat'),
 (3, 'Coucou de la part de Rex et son nouveau jouet pr&eacute;f&eacute;r&eacute; ! Pouet Pouet !!! :D ', 3, 3, '2020-02-01 23:00:00', 'Nouveau jouet!'),
 (4, 'Le dressage de Sacha a commenc&eacute; hier, il conna&icirc;t d&eacute;j&agrave; plein de nouveaux tours ! Sacha donne la patte ! haha ', 4, 4, '2020-02-12 01:00:00', 'Dressage'),
-(5, 'Philou dort comme un lard ! hahaha bonne nuit tout le monde ! ', 5, 1, '2020-02-10 05:45:00', 'Sommeil profond'),
-(26, 'Hahah trop drole Ourson ! ', 30, 1, '2020-03-07 00:00:00', 'AAAAAA');
+(5, 'Philou dort comme un lard ! hahaha bonne nuit tout le monde ! ', 5, 1, '2020-02-10 05:45:00', 'Sommeil profond');
 
 --
 -- Index pour les tables déchargées
 --
 
 --
--- Index pour la table `chiots`
+-- Index pour la table `01_chiots`
 --
-ALTER TABLE `chiots`
+ALTER TABLE `01_chiots`
   ADD PRIMARY KEY (`idChiot`);
 
 --
--- Index pour la table `comments`
+-- Index pour la table `01_comments`
 --
-ALTER TABLE `comments`
+ALTER TABLE `01_comments`
   ADD PRIMARY KEY (`idComment`);
 
 --
--- Index pour la table `imagepost`
+-- Index pour la table `01_imagepost`
 --
-ALTER TABLE `imagepost`
+ALTER TABLE `01_imagepost`
   ADD PRIMARY KEY (`idImage`);
 
 --
--- Index pour la table `posts`
+-- Index pour la table `01_posts`
 --
-ALTER TABLE `posts`
+ALTER TABLE `01_posts`
   ADD PRIMARY KEY (`idPost`);
 
 --
@@ -173,28 +170,28 @@ ALTER TABLE `posts`
 --
 
 --
--- AUTO_INCREMENT pour la table `chiots`
+-- AUTO_INCREMENT pour la table `01_chiots`
 --
-ALTER TABLE `chiots`
+ALTER TABLE `01_chiots`
   MODIFY `idChiot` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT pour la table `comments`
+-- AUTO_INCREMENT pour la table `01_comments`
 --
-ALTER TABLE `comments`
-  MODIFY `idComment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+ALTER TABLE `01_comments`
+  MODIFY `idComment` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
--- AUTO_INCREMENT pour la table `imagepost`
+-- AUTO_INCREMENT pour la table `01_imagepost`
 --
-ALTER TABLE `imagepost`
-  MODIFY `idImage` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+ALTER TABLE `01_imagepost`
+  MODIFY `idImage` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
--- AUTO_INCREMENT pour la table `posts`
+-- AUTO_INCREMENT pour la table `01_posts`
 --
-ALTER TABLE `posts`
-  MODIFY `idPost` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+ALTER TABLE `01_posts`
+  MODIFY `idPost` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

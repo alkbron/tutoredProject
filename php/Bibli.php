@@ -1,14 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zieda
- * Date: 04/02/2020
- * Time: 22:03
- */
 
+$PREFIXE = "01_";
 require_once "Message.php";
 require_once "Commentaire.php";
 require_once "Chiot.php";
+
+/**
+ * BIBLIOTHEQUE POUR LE MODE UTILISATEUR
+ */
+
+
 /**
  * Renvoie vers la sortie standard le debut du code html
  *
@@ -166,7 +167,10 @@ function print_message(Message $message,$numero_message,$array_chiots){
     '</div>';
 }
 
-
+/**
+ * Renvoie vers la sortie standard le code html de la nav bar pour les grands ecrans
+ * @param array $array_chiots le tableau avec tous les chiens
+ */
 function print_nav_big($array_chiots){
 
     echo '<div class="navBig">',
@@ -186,6 +190,10 @@ function print_nav_big($array_chiots){
     '</div>';
 }
 
+/**
+ * Renvoie vers la sortie standard le code html de la nav bar pour les petits ecrans
+ * @param array $array_chiots le tableau avec tous les chiens
+ */
 function print_nav_small($array_chiots){
     if(isset($_GET['idChiot'])){
         $idChiotSelected = $_GET['idChiot'];
@@ -225,7 +233,10 @@ function print_nav_small($array_chiots){
     '</select>';
 }
 
-
+/**
+ * Fonction qui se connecte avec la base de données
+ * @return PDO L'objet PDO representant la connexion avec la BD
+ */
 function connectToBdd(){
     $pdo = new PDO("mysql:localhost=localhost;dbname=rs_chiens_tutored", "root", "");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -240,8 +251,8 @@ function connectToBdd(){
  * @return array Le tableau de tous les posts
  */
 function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
-
-    $sql = "SELECT * FROM posts";
+    global $PREFIXE;
+    $sql = "SELECT * FROM ".$PREFIXE."posts";
     if($chiotSelected!=-1){
         $sql = $sql." WHERE idChiot = ".$chiotSelected;
     }
@@ -252,7 +263,7 @@ function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
     $array = array();
 
     foreach ($pdostat as $item){
-        $pdo2stat = $pdo->query("SELECT * FROM comments WHERE idPost=" . $item["idPost"]);
+        $pdo2stat = $pdo->query("SELECT * FROM ".$PREFIXE."comments WHERE idPost=" . $item["idPost"]);
         $pdo2stat->setFetchMode(PDO::FETCH_ASSOC);
 
         $array_comm = array();
@@ -277,7 +288,7 @@ function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
             return $ad < $bd ? -1 : 1;
         });
 
-        $pdo3stat = $pdo->query("SELECT * FROM imagepost WHERE idImage=" . $item["idImageAssoc"]);
+        $pdo3stat = $pdo->query("SELECT * FROM ".$PREFIXE."imagepost WHERE idImage=" . $item["idImageAssoc"]);
         $pdo3stat->setFetchMode(PDO::FETCH_ASSOC);
 
         $chiot_tmp = null;
@@ -319,8 +330,14 @@ function arrayPosts(PDO $pdo, $chiotSelected, $array_chiots){
     return $array;
 }
 
+/**
+ * Fonction qui compte les chiots
+ * @param PDO $pdo
+ * @return int le nombre de chiots
+ */
 function countChiots(PDO $pdo){
-    return $pdo->query("SELECT COUNT(*) FROM chiots")->fetchColumn();
+    global $PREFIXE;
+    return $pdo->query("SELECT COUNT(*) FROM ".$PREFIXE."chiots")->fetchColumn();
 }
 
 /**
@@ -329,7 +346,8 @@ function countChiots(PDO $pdo){
  * @return array Le tableau avec toutes les chaines de caracteres renvoyées
  */
 function getAllChiots(PDO $pdo){
-    $sql = "SELECT * FROM chiots";
+    global $PREFIXE;
+    $sql = "SELECT * FROM ".$PREFIXE."chiots";
     $pdostat = $pdo->query($sql);
     $pdostat->setFetchMode(PDO::FETCH_ASSOC);
 
@@ -342,6 +360,11 @@ function getAllChiots(PDO $pdo){
     return $array;
 }
 
+/**
+ * Renvoie vers la sortie standard l'entete pour ecrire un post
+ * @param array $array_chiots Tableau avec tous les chiots
+ * @param String $messageError Message d'erreur s'il y en a un
+ */
 function print_header($array_chiots,$messageError){
     echo '<header class="text-white rounded">',
             '<form action="../upload.php" method="post" enctype="multipart/form-data">',
@@ -374,7 +397,13 @@ function print_header($array_chiots,$messageError){
         '</header>';
 }
 
+/**
+ * Fonction qui ajoute un post
+ * @param PDO $pdo
+ * @param Message $message Le post que l'on veut rajouter
+ */
 function addPost(PDO $pdo, Message $message){
+    global $PREFIXE;
     $cpt = 0;
     $string = "(";
     foreach ($message->url_image as $url){
@@ -395,7 +424,7 @@ function addPost(PDO $pdo, Message $message){
         }
         $cpt++;
     }
-    $sql = "INSERT INTO imagepost (urlImage1,urlImage2,urlImage3,urlImage4) VALUES $string";
+    $sql = "INSERT INTO ".$PREFIXE."imagepost (urlImage1,urlImage2,urlImage3,urlImage4) VALUES $string";
     echo $sql;
     $pdo->query($sql);
     $idImageAssoc = $pdo->lastInsertId();
@@ -406,29 +435,33 @@ function addPost(PDO $pdo, Message $message){
     }
     $contenu_post = str_replace("'","\'",$message->contenu);
     $titre_post = str_replace("'","\'",$message->titre);
-    $sql = "INSERT INTO posts (txtPost,idImageAssoc,idChiot,datePost,titre) VALUES ('$contenu_post','$idImageAssoc','$idChiot','$message->date','$titre_post')";
+    $sql = "INSERT INTO ".$PREFIXE."posts (txtPost,idImageAssoc,idChiot,datePost,titre) VALUES ('$contenu_post','$idImageAssoc','$idChiot','$message->date','$titre_post')";
     //echo $sql;
     $pdo->query($sql);
 
 
 }
 
-function lastIDPost(PDO $pdo){
-    return $pdo->query("SELECT COUNT(*) FROM posts")->fetchColumn();
-}
-
-function lastIDComment(PDO $pdo){
-    return $pdo->query("SELECT COUNT(*) FROM comments")->fetchColumn();
-}
-
+/**
+ * Fonction qui rajoute un commentaire a la base de données
+ * @param PDO $pdo
+ * @param int $idPost l'id du post auquel le commentaire se refere
+ * @param Commentaire $commentaire le commentaire que l'on veut ajouter
+ */
 function add_Comment($pdo,$idPost,Commentaire $commentaire){
+    global $PREFIXE;
     $idComment = lastIDComment($pdo) + 1;
 
-    $sql = "INSERT INTO comments (txtComment,idChiotAuteur,idPost,dateComment) VALUES ('$commentaire->contenu',$commentaire->author,$idPost,'$commentaire->date')";
+    $sql = "INSERT INTO ".$PREFIXE."comments (txtComment,idChiotAuteur,idPost,dateComment) VALUES ('$commentaire->contenu',$commentaire->author,$idPost,'$commentaire->date')";
     //echo $sql;
     $pdo->query($sql);
 }
 
+/**
+ * Renvoie une chaine representant une date que l'on peut afficher
+ * @param string $date la date que l'on veut afficher
+ * @return string
+ */
 function print_date_user($date) {
     $jour = explode(" ",$date)[0];
     $heure = explode(" ",$date)[1];

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zieda
- * Date: 04/02/2020
- * Time: 22:28
- */
 
 class Commentaire
 {

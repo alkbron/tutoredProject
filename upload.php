@@ -1,4 +1,6 @@
 <?php
+
+$PREFIXE = "01_";
 require_once "php/Bibli.php";
 /*
  * ERREURS POSSIBLES :
@@ -23,7 +25,7 @@ if(strlen($_POST["txt_titre"])==0){
             //Il y a bien un fichier à traiter
             $target_dir = "uploads/";
             $nbFich = 0;
-            $nom_fichier = "chiot" . $_POST['auteur'] . "_" . $nbFich;
+            $nom_fichier = $PREFIXE."chiot" . $_POST['auteur'] . "_" . $nbFich;
 
             $_FILES[$nom_files]["name"] = $nom_fichier . ".jpg";
 
