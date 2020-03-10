@@ -215,9 +215,33 @@ function deletePost(PDO $pdo,$idPost){
     global $PREFIXE;
     $idImage =  $pdo->query("SELECT idImageAssoc FROM ".$PREFIXE."posts WHERE idPost=$idPost")->fetchColumn();
     if(strlen($idImage)>0){
+    $pdo3stat = $pdo->query("SELECT * FROM ".$PREFIXE."imagepost WHERE idImage=" . $idImage);
+    $pdo3stat->setFetchMode(PDO::FETCH_ASSOC);
+    $array_image = array();
+    foreach ($pdo3stat as $image_item){
+
+        if(strlen($image_item["urlImage4"])!=0){
+            array_push($array_image,$image_item["urlImage4"]);
+        }
+        if(strlen($image_item["urlImage3"])!=0){
+            array_push($array_image,$image_item["urlImage3"]);
+        }
+        if(strlen($image_item["urlImage2"])!=0){
+            array_push($array_image,$image_item["urlImage2"]);
+        }
+
+        array_push($array_image,$image_item["urlImage1"]);
+    }
+
+    foreach ($array_image as $image_file){
+        unlink("../$image_file");
+    }
+
+
         $sql = "DELETE FROM ".$PREFIXE."imagepost WHERE idImage=$idImage";
         $pdo->query($sql);
     }
+
     $sql = "DELETE FROM ".$PREFIXE."posts WHERE idPost=$idPost";
     $pdo->query($sql);
     $sql = "DELETE FROM ".$PREFIXE."comments WHERE idPost=$idPost";

@@ -119,7 +119,7 @@ if(strlen($_POST["txt_titre"])==0){
 }
 if(count($array_url)>0){
     $pdo = connectToBdd();
-    $message = new Message($_POST["auteur"], $array_url,$array, $_POST['content_post'], date("Y-m-d"), 0, $_POST["txt_titre"]);
+    $message = new Message($_POST["auteur"], $array_url,$array, $_POST['content_post'], date("Y-m-d H:i:s"), 0, $_POST["txt_titre"]);
     addPost($pdo, $message);
 
 }

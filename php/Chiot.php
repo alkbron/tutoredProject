@@ -1,7 +1,7 @@
 <?php
 
 
-class Chiot
+class   Chiot
 {
     public $idChiot;
     public $nomChiot;
