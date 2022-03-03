@@ -357,7 +357,7 @@ Admettons que l'on ai une liste de valeurs mais qu'elles ne sont pas traduites e
 ```mermaid
 graph TD
 A["Aller sur le site de Mirakl"]
-click A "https://maty-prod.mirakl.net/login"
+click A "https://maty-prod.mirakl.net/login" _blank
 ```
 
 ### Comment ajouter une colonne en DB?
